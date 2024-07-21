@@ -1,0 +1,4 @@
+extraction/configuration.conf
+__pycache__
+*.conf
+venv/
