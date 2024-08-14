@@ -5,19 +5,20 @@ import sys
 import datetime
 import pandas as pd
 import numpy as np
-
+from validate_input import validate_input
 
 # Read Configuraton File
 parser = configparser.ConfigParser()
-script_path = pathlib.Path(__file__).parent.resolve()
+script_path = pathlib.Path(__file__).parent.parent.parent.resolve()
 config_file_name = "configuration.conf"
 parser.read(f"{script_path}/{config_file_name}")
+
 
 # Variables
 CLIENT_ID = parser.get("REDDIT_CONFIG", "ClientID")
 CLIENT_SECRET = parser.get("REDDIT_CONFIG", "ClientSecret")
 
-SUBREDDIT_NAME = 'AskSerbia'
+SUBREDDIT_NAME = 'dataengineering'
 TIME_FILTER = 'day'
 LIMIT = None
 
@@ -43,13 +44,6 @@ try:
 except Exception as e:
     sys.exit(1)
 
-
-def validate_input(input_date: str):
-    try:
-        datetime.datetime.strptime(input_date, "%Y%m%d")
-    except ValueError as e:
-        raise ValueError("Input should be in format YYYYmmdd")
-        sys.exit(1)  
          
 validate_input(output_file_name)
 date_for_dag_run = datetime.datetime.strptime(output_file_name, "%Y%m%d")
@@ -75,9 +69,7 @@ def reddit_api() -> praw.Reddit:
     except Exception as e:
         print(f"Unable to connect to API. Error: {e}")
         sys.exit(1)
-
-
-    
+ 
 def extract_data(reddit) -> pd.DataFrame:
     list_of_posts = []
     subreddit_name = reddit.subreddit(SUBREDDIT_NAME)
