@@ -5,6 +5,7 @@ __pycache__
 venv/
 
 terraform/
+*.txt
 
 __pycache__/
 *.py[cod]
