@@ -6,13 +6,14 @@ import datetime
 import pandas as pd
 import numpy as np
 from validate_input import validate_input
+import os
+
 
 # Read Configuraton File
 parser = configparser.ConfigParser()
-script_path = pathlib.Path(__file__).parent.parent.parent.resolve()
+script_path = pathlib.Path(__file__).parent.resolve()
 config_file_name = "configuration.conf"
 parser.read(f"{script_path}/{config_file_name}")
-
 
 # Variables
 CLIENT_ID = parser.get("REDDIT_CONFIG", "ClientID")
@@ -43,10 +44,19 @@ try:
     output_file_name = sys.argv[1]
 except Exception as e:
     sys.exit(1)
-
          
 validate_input(output_file_name)
 date_for_dag_run = datetime.datetime.strptime(output_file_name, "%Y%m%d")
+
+tmp_directory = '/opt/airflow/extraction/tmp'
+
+# Check if the directory exists
+if not os.path.exists(tmp_directory):
+    # Create the directory (and any necessary parent directories)
+    os.makedirs(tmp_directory)
+    print(f"Directory '{tmp_directory}' created successfully.")
+else:
+    print(f"Directory '{tmp_directory}' already exists.")
 
 
 def main():
@@ -110,7 +120,7 @@ def transform_data(df: pd.DataFrame):
     
 def load_to_csv(df: pd.DataFrame):
     try:
-        df.to_csv(f'tmp/{output_file_name}.csv', index=False)
+        df.to_csv(f'/opt/airflow/extraction/tmp/{output_file_name}.csv', index=False)
     except Exception as e:
         print(f"Error (load_to_csv), {e}")
         sys.exit(1)

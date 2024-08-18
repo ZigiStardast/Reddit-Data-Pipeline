@@ -5,13 +5,13 @@ import pathlib
 import datetime
 import sys
 from validate_input import validate_input
+import os
 
 # Read Configuration File
 parser = configparser.ConfigParser()
-script_path = pathlib.Path(__file__).parent.parent.parent.resolve()
+script_path = pathlib.Path(__file__).parent.resolve()
 config_file_name = "configuration.conf"
 parser.read(f"{script_path}/{config_file_name}")
-
 
 # Variables
 BUCKET_NAME = parser.get("aws_config", "bucket_name")
@@ -55,7 +55,7 @@ def create_bucket_if_not_exists(conn):
         
 def upload_to_s3(conn):
     conn.meta.client.upload_file(
-        Filename='/tmp/' + FILENAME,
+        Filename=f'/opt/airflow/extraction/tmp/{FILENAME}',
         Bucket=BUCKET_NAME,
         Key=FILENAME # putanja unutar bucket-a
     )

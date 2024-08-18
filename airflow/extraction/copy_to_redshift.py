@@ -11,7 +11,7 @@ from psycopg2 import sql
 
 # Configuration File
 parser = configparser.ConfigParser()
-script_path = pathlib.Path(__file__).parent.parent.parent.resolve()
+script_path = pathlib.Path(__file__).parent.resolve()
 config_file_name = "configuration.conf"
 parser.read(f"{script_path}/{config_file_name}")
 
@@ -60,7 +60,7 @@ create_temp_table = sql.SQL("CREATE TEMP TABLE temp_table (LIKE {table});"
 
 copy_to_temp_table = f"COPY temp_table FROM '{s3_file_path}' iam_role '{role_string}' IGNOREHEADER 1 DELIMITER ',' CSV;"
 
-delete_from_table = sql.SQL("DELETE FROM {table} USING our_staging_table WHERE {table}.id = our_staging_table.id;"
+delete_from_table = sql.SQL("DELETE FROM {table} USING temp_table WHERE {table}.id = temp_table.id;"
                             ).format(table=sql.Identifier(TABLE_NAME))
 
 add_to_table = sql.SQL("INSERT INTO {table} SELECT * FROM temp_table;"
@@ -71,6 +71,7 @@ drop_temp_table = "DROP TABLE temp_table"
 def main():
     validate_input(output_file_name)
     rs_conn = connect_to_redshift()
+    load_data_into_redshift(rs_conn)
     
 
 def connect_to_redshift():
