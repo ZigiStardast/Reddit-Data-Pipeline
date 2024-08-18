@@ -4,12 +4,20 @@ __pycache__
 *.tf
 venv/
 
-terraform/
 *.txt
 *.csv
 __pycache__/
 *.py[cod]
 *$py.class
+
+# terraform
+.terraform          # Terraform cache
+*.tfstate           # a plaintext Terraform state file
+*.tfstate.backup
+*.tfstate.lock.*
+.terraform.lock.hcl
+variables.tf
+
 
 # C extensions
 *.so
