@@ -4,6 +4,10 @@ __pycache__
 *.tf
 venv/
 
+config/
+logs/
+plugins/
+
 *.txt
 *.csv
 __pycache__/
